@@ -8,6 +8,7 @@ import 'remote_authentication_test.mocks.dart';
 abstract class HttpClient {
   Future<void> request({
     required String url,
+    required String method
   });
 }
 
@@ -21,21 +22,24 @@ class RemoteAuthentication {
   });
 
   Future<void> auth() async {
-    await httpClient.request(url: url);
+    await httpClient.request(url: url, method: 'post');
   }
 }
 
 @GenerateMocks([HttpClient])
 void main() {
-  test('Should call HttpClient with correct URL', () async {
+  test('Should call HttpClient with correct values', () async {
     final httpClient = MockHttpClient();
     final url = faker.internet.httpUrl();
     final sut = RemoteAuthentication(httpClient: httpClient, url: url);
 
-    when(httpClient.request(url: url)).thenAnswer((_) async => null);
+    when(httpClient.request(url: url, method: 'post')).thenAnswer((_) async => null);
 
     await sut.auth();
 
-    verify(httpClient.request(url: url));
+    verify(httpClient.request(
+      url: url,
+      method: "post"
+    ));
   });
 }
