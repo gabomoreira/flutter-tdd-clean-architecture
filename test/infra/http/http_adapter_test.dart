@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:manguinho/data/http/http_error.dart';
 import 'package:manguinho/infra/http/http.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -83,6 +84,22 @@ void main() {
       final response = await sut.request(url: url, method: 'post');
 
       expect(response, null);
+    });
+
+    test('Should return BadRequestError if returns 400 no data', () async {
+      mockResponse(400);
+
+      final response = sut.request(url: url, method: 'post');
+
+      expect(response, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return BadRequestError if returns 400 data', () async {
+      mockResponse(400, body: '');
+
+      final response = sut.request(url: url, method: 'post');
+
+      expect(response, throwsA(HttpError.badRequest));
     });
   });
 }
