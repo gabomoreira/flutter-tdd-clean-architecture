@@ -26,6 +26,17 @@ void main() {
     };
     mockedUri = sut.toUri(url);
   });
+
+  group('shared', () {
+    test('Should throw ServerError invalid method http is provided', () async {
+      when(client.head(any, headers: anyNamed('headers')))
+        .thenThrow(HttpError.serverError);
+
+      final future = sut.request(url: url, method: 'invalid_method');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+  });
   
   group('post', () {
     PostExpectation mockRequest() => when(client.post(any, headers: anyNamed('headers'), body: anyNamed('body')));
