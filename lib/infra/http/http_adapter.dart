@@ -27,8 +27,16 @@ class HttpAdapter implements HttpClient {
       return response.body.isEmpty ? null : jsonDecode(response.body);
     } else if (response.statusCode == 204) {
       return null;
-    } else {
+    } else if (response.statusCode == 400) {
       throw HttpError.badRequest;
+    } if (response.statusCode == 401) {
+      throw HttpError.unauthorized;
+    } if (response.statusCode == 403) {
+      throw HttpError.forbidden;
+    } if (response.statusCode == 404) {
+      throw HttpError.notFound;
+    } if (response.statusCode == 500) {
+      throw HttpError.serverError;
     }
   }
 

@@ -86,7 +86,7 @@ void main() {
       expect(response, null);
     });
 
-    test('Should return BadRequestError if returns 400 no data', () async {
+    test('Should return BadRequestError if returns 400', () async {
       mockResponse(400);
 
       final response = sut.request(url: url, method: 'post');
@@ -94,12 +94,36 @@ void main() {
       expect(response, throwsA(HttpError.badRequest));
     });
 
-    test('Should return BadRequestError if returns 400 data', () async {
-      mockResponse(400, body: '');
+    test('Should return UnauthorizedError if returns 401', () async {
+      mockResponse(401);
 
       final response = sut.request(url: url, method: 'post');
 
-      expect(response, throwsA(HttpError.badRequest));
+      expect(response, throwsA(HttpError.unauthorized));
+    });
+
+    test('Should return ForbiddenError if returns 403', () async {
+      mockResponse(403);
+
+      final response = sut.request(url: url, method: 'post');
+
+      expect(response, throwsA(HttpError.forbidden));
+    });
+
+    test('Should return ForbiddenError if returns 404', () async {
+      mockResponse(404);
+
+      final response = sut.request(url: url, method: 'post');
+
+      expect(response, throwsA(HttpError.notFound));
+    });
+
+    test('Should return ServerError if returns 500', () async {
+      mockResponse(500);
+
+      final response = sut.request(url: url, method: 'post');
+
+      expect(response, throwsA(HttpError.serverError));
     });
   });
 }
