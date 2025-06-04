@@ -1,40 +1,11 @@
-import 'dart:convert';
-
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart';
-import 'package:manguinho/data/http/http.dart';
+import 'package:manguinho/infra/http/http.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:http/http.dart';
 import 'http_adapter_test.mocks.dart';
-
-class HttpAdapter implements HttpClient {
-  final Client client;
-
-  HttpAdapter(this.client);
-
-  Future<Map?> request({
-    required String url,
-    required String method,
-    Map? body
-  }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json'
-    };
-    final jsonBody = body != null ? jsonEncode(body) : null;
-    final response = await client.post(toUri(url), headers: headers, body: jsonBody);
-
-    if (response.statusCode == 200) {
-      return response.body.isEmpty ? null : jsonDecode(response.body);
-    } else {
-      return null;
-    }
-  }
-
-  Uri toUri(String url) => Uri.parse(url);
-}
 
 @GenerateMocks([Client])
 void main() {
