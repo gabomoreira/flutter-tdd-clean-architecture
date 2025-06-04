@@ -33,30 +33,35 @@ class HttpAdapter implements HttpClient {
 
 @GenerateMocks([Client])
 void main() {
+  late MockClient client;
+  late HttpAdapter sut;
+  late String url;
+  late Map<String, String> defaultHeaders;
+  late Uri mockedUri;
+
+  setUp(() {
+    client = MockClient();
+    sut = HttpAdapter(client);
+    url = faker.internet.httpUrl();
+    defaultHeaders = {
+      'content-type': 'application/json',
+      'accept': 'application/json'
+    };
+    mockedUri = sut.toUri(url);
+  });
   
   group('post', () {
-    late MockClient client;
-    late HttpAdapter sut;
-    late String url;
-    late Map<String, String> defaultHeaders;
-    late Uri mockedUri;
+    PostExpectation mockRequest() => when(client.post(any, headers: anyNamed('headers'), body: anyNamed('body')));
+
+    void mockResponse(int statusCode, {String body = '{"any_key": "any_value"}'}) {
+      mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    }
 
     setUp(() {
-      client = MockClient();
-      sut = HttpAdapter(client);
-      url = faker.internet.httpUrl();
-      defaultHeaders = {
-        'content-type': 'application/json',
-        'accept': 'application/json'
-      };
-      mockedUri = sut.toUri(url);
+      mockResponse(200);
     });
 
     test('Should call post with correct values', () async {
-      final body = {'any_key': 'any_value'};
-      when(client.post(mockedUri, headers: defaultHeaders, body: anyNamed('body'))) 
-        .thenAnswer((_) async => Response('{"any_key": "any_value"}', 200));
-
       await sut.request(url: url, method: 'post');
 
       verify(client.post( 
@@ -66,9 +71,6 @@ void main() {
     });
 
     test('Should call post with null body', () async {
-      when(client.post(mockedUri, headers: defaultHeaders, body: anyNamed('body'))) 
-        .thenAnswer((_) async => Response('{"any_key": "any_value"}', 200));
-
       await sut.request(url: url, method: 'post');
 
       verify(client.post( 
@@ -78,23 +80,18 @@ void main() {
     });
 
     test('Should return data with returns 200', () async {
-      final body = {'any_key': 'any_value'};
-
-      when(client.post(any, headers: anyNamed('headers'))) 
-        .thenAnswer((_) async => Response('{"any_key": "any_value"}', 200));
-
       final response = await sut.request(url: url, method: 'post');
-
-      expect(response, body);
+ 
+      expect(response, {"any_key": "any_value"});
     });
 
     test('Should return null if returns 200 no data', () async {
-      when(client.post(any, headers: anyNamed('headers'), body: anyNamed('body'))) 
-        .thenAnswer((_) async => Response('', 200));
+      mockResponse(200, body: '');
 
       final response = await sut.request(url: url, method: 'post');
 
       expect(response, null);
     });
+    
   });
 }
