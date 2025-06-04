@@ -58,7 +58,7 @@ void main() {
     test('Should return data with returns 200', () async {
       final response = await sut.request(url: url, method: 'post');
  
-      expect(response, {"any_key": "any_value"});
+      expect(response, {'any_key': 'any_value'});
     });
 
     test('Should return null if returns 200 with no data', () async {
