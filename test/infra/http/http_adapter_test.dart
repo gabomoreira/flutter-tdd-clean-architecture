@@ -22,7 +22,8 @@ class HttpAdapter {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
-    await client.post(toUri(url), headers: headers, body: jsonEncode(body));
+    final jsonBody = body != null ? jsonEncode(body) : null;
+    await client.post(toUri(url), headers: headers, body: jsonBody);
   }
 
   Uri toUri(String url) => Uri.parse(url);
@@ -60,6 +61,18 @@ void main() {
         mockedUri, 
         headers: defaultHeaders,
         body: jsonEncode(body)
+      ));
+    });
+
+    test('Should call post with null body', () async {
+      when(client.post(mockedUri, headers: defaultHeaders)) 
+        .thenAnswer((_) async => Response('', 200));
+
+      await sut.request(url: url, method: 'post');
+
+      verify(client.post( 
+        any,
+        headers: anyNamed('headers'),
       ));
     });
   });
