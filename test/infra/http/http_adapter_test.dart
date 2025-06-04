@@ -110,7 +110,7 @@ void main() {
       expect(response, throwsA(HttpError.forbidden));
     });
 
-    test('Should return ForbiddenError if returns 404', () async {
+    test('Should return NotFoundError if returns 404', () async {
       mockResponse(404);
 
       final response = sut.request(url: url, method: 'post');
