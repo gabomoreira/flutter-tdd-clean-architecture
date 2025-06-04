@@ -29,22 +29,31 @@ class HttpAdapter {
 void main() {
   
   group('post', () {
-    test('Should call post with correct values', () async {
-      final client = MockClient();
-      final sut = HttpAdapter(client);
-      final url = faker.internet.httpUrl();
-      final defaultHeaders = {
+    late MockClient client;
+    late HttpAdapter sut;
+    late String url;
+    late Map<String, String> defaultHeaders;
+
+    setUp(() {
+      client = MockClient();
+      sut = HttpAdapter(client);
+      url = faker.internet.httpUrl();
+      defaultHeaders = {
         'content-type': 'application/json',
         'accept': 'application/json'
       };
+    });
 
-      when(client.post(sut.toUri(url), headers: defaultHeaders)) 
+    Uri mockedUri = sut.toUri(url);
+
+    test('Should call post with correct values', () async {
+      when(client.post(mockedUri, headers: defaultHeaders)) 
         .thenAnswer((_) async => Response('', 200));
 
       await sut.request(url: url, method: 'post');
 
       verify(client.post(
-        sut.toUri(url), 
+        mockedUri, 
         headers: defaultHeaders
       ));
     });
