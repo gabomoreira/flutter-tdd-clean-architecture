@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../ui/pages/pages.dart';
 
 class App extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    final primaryColor = const Color(0xFF005C63);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
+    final primaryColor = const Color.fromRGBO(0, 92, 99, 1);
     final primaryColorDark = const Color(0xFF004349);
     final primaryColorLight = const Color(0xFF4FBDBA);
     final backgroundColor = const Color(0xFFF6F6F6);
     final textColor = const Color(0xFF1C1C1C);
-
 
     return MaterialApp(
       title: "gabo's",
